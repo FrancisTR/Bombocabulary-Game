@@ -1,5 +1,6 @@
 const ListDetails = ({ result }) => {
-  console.log({ result });
+  //console.log({ result });
+  //HW: Take in a txt file and read all the words
 
   const { word, phonetics, meanings } = result;
 
