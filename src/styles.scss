@@ -1,0 +1,23 @@
+$primary-color: blueviolet;
+$background-color: #3cb4f0;
+
+*{
+  margin: 0;
+  padding: 0;
+  background-color: $background-color;
+  color: white;
+}
+
+
+
+.App {
+  text-align: center;
+}
+
+.InputButtons button{
+  margin: 8px;
+}
+
+.WordCard{
+  background-color: $primary-color;
+}

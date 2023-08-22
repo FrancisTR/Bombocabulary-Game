@@ -1,21 +1,22 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ListDetails from "./components/ListDetails";
-import "./styles.css";
+
+import raw_text from "./words/words_alpha.txt";
+import "./styles.scss";
 
 export default function App() {
+  //User input
   const [keyWord, setKeyWord] = useState("");
   const [result, setResult] = useState(null);
 
-  //placeholder for now
-  const [resultTemp, setResultTemp] = useState([
-    "Good",
-    "Morning",
-    "Hello",
-    "There"
-  ]);
-  var [randomIndex, setRandomIndex] = useState(0);
-  const [randomWord, setRandomWord] = useState(resultTemp[randomIndex]);
+  //random words
+  var [randomIndex, setRandomIndex] = useState(
+    Math.floor(Math.random() * 1000)
+  );
+  const [randomWord, setRandomWord] = useState("Welcome");
+  const [currentWord, setCurrentWord] = useState(randomWord);
+  const [hiddenWord, setHiddenWord] = useState(guessWord());
 
   const api = "https://api.dictionaryapi.dev/api/v2/entries/en";
 
@@ -24,11 +25,27 @@ export default function App() {
     setRandomIndex(num);
   };
 
-  const generateWord = () => {
-    randomNumberInRange(resultTemp.length);
-    setRandomWord(resultTemp[randomIndex]);
-    console.log({ randomWord });
-  };
+  function generateWord() {
+    fetch(raw_text)
+      .then((r) => r.text())
+      .then((text) => {
+        const wordList = text.split("\n");
+        //console.log(wordList); //An array
+
+        randomNumberInRange(wordList.length);
+        setRandomWord(wordList[randomIndex]);
+
+        //console.log({ randomWord });
+      });
+  }
+
+  function guessWord() {
+    for (var i = 0, y = randomWord; i < randomWord.length / 2; i++) {
+      var n = Math.floor(Math.random() * ((randomWord.length - 1) / 2));
+      y = y.slice(0, n).concat("_", y.slice(n + 1));
+    }
+    return y;
+  }
 
   async function handleSearch() {
     try {
@@ -39,36 +56,69 @@ export default function App() {
     } catch (e) {
       console.log({ e });
     }
-
-    // fetch("./words/words_alpha.txt")
-    //   .then((r) => r.text())
-    //   .then((text) => {
-    //     console.log(text);
-    //   });
+    setCurrentWord(randomWord);
+    setHiddenWord(guessWord());
   }
 
-  //Not used
-  // function handleClear() {
-  //   setKeyWord("");
-  //   setResult(null);
-  // }
+  useEffect(() => {
+    handleSearch();
+  }, []);
+
+  function checkWord() {
+    //console.log(keyWord);
+    //console.log({ currentWord });
+    if (keyWord === currentWord) {
+      console.log("Win!");
+      handleSearch();
+    } else {
+      console.log("Lose");
+    }
+  }
+
+  function handleClear() {
+    setKeyWord("");
+    //setResult(null);
+  }
 
   return (
     <div className="App">
+      {result && <ListDetails {...{ result, hiddenWord }} />}
+
+      {/* User input */}
       <input
-        className="form-control"
+        className="form-control w-50 mx-auto"
         value={keyWord}
         onChange={(e) => setKeyWord(e.target.value)}
       />
-      {/* <button className="btn btn-primary" type="submit" onClick={handleSearch}>
-        Search
-      </button> */}
 
-      <button className="btn btn-primary" type="submit" onClick={handleSearch}>
-        Generate
-      </button>
+      {/* Buttons */}
+      <div className="InputButtons">
+        <button
+          disabled={!keyWord}
+          className="btn btn-success btn-lg"
+          type="submit"
+          onClick={checkWord}
+        >
+          Enter
+        </button>
 
-      {result && <ListDetails {...{ result }} />}
+        <button
+          disabled={!keyWord}
+          className="btn btn-info btn-lg"
+          type="submit"
+          onClick={handleClear}
+        >
+          Clear
+        </button>
+
+        <button
+          className="btn btn-warning btn-lg"
+          type="submit"
+          onClick={handleSearch}
+        >
+          Skip
+        </button>
+      </div>
     </div>
   );
 }

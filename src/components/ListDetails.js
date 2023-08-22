@@ -1,32 +1,33 @@
-const ListDetails = ({ result }) => {
+const ListDetails = ({ result, hiddenWord }) => {
   //console.log({ result });
-  //HW: Take in a txt file and read all the words
 
-  const { word, phonetics, meanings } = result;
+  const { meanings } = result;
 
   return (
-    <div>
+    <div className="WordCard container mx-auto mt-5">
       <div>
-        <h3>Word</h3>
+        <h1>What's this word?</h1>
         <div>
-          <p>{word}</p>
-          <p>{meanings[0].partOfSpeech}</p>
-          <p>{phonetics[0].text}</p>
+          <p>This word is a {meanings[0].partOfSpeech}.</p>
         </div>
 
         <div>
-          <h3>Meaning:</h3>
+          <h3>Definition:</h3>
           <p>{meanings[0].definitions[0].definition}</p>
         </div>
 
         <div>
+          <h3>{hiddenWord}</h3>
+        </div>
+
+        {/* <div>
           <h3>Synonyms:</h3>
           <p>
             {meanings[0].synonyms.map((item, index) => {
               return <p key={index}>{item}</p>;
             })}
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );
