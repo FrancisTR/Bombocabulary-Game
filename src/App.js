@@ -6,6 +6,9 @@ import raw_text from "./words/words_alpha.txt";
 import "./styles.scss";
 
 export default function App() {
+  //Switch
+  const [startButton, setStartButton] = useState(false);
+
   //User input
   const [keyWord, setKeyWord] = useState("");
   const [result, setResult] = useState(null);
@@ -14,9 +17,12 @@ export default function App() {
   var [randomIndex, setRandomIndex] = useState(
     Math.floor(Math.random() * 1000)
   );
-  const [randomWord, setRandomWord] = useState("Welcome");
+  const [randomWord, setRandomWord] = useState("welcome");
   const [currentWord, setCurrentWord] = useState(randomWord);
   const [hiddenWord, setHiddenWord] = useState(guessWord());
+
+  //word correction display text
+  const [displayMessage, setDisplayMessage] = useState("???");
 
   const api = "https://api.dictionaryapi.dev/api/v2/entries/en";
 
@@ -67,9 +73,10 @@ export default function App() {
   function checkWord() {
     //console.log(keyWord);
     //console.log({ currentWord });
-    if (keyWord === currentWord) {
+    if (keyWord.toLowerCase() === currentWord.toLowerCase()) {
       console.log("Win!");
       handleSearch();
+      setKeyWord("");
     } else {
       console.log("Lose");
     }
@@ -80,45 +87,73 @@ export default function App() {
     //setResult(null);
   }
 
-  return (
-    <div className="App">
-      {result && <ListDetails {...{ result, hiddenWord }} />}
+  function startButtonSwitch() {
+    setStartButton(true);
+  }
 
-      {/* User input */}
-      <input
-        className="form-control w-50 mx-auto"
-        value={keyWord}
-        onChange={(e) => setKeyWord(e.target.value)}
-      />
-
-      {/* Buttons */}
-      <div className="InputButtons">
-        <button
-          disabled={!keyWord}
-          className="btn btn-success btn-lg"
-          type="submit"
-          onClick={checkWord}
-        >
-          Enter
-        </button>
-
-        <button
-          disabled={!keyWord}
-          className="btn btn-info btn-lg"
-          type="submit"
-          onClick={handleClear}
-        >
-          Clear
-        </button>
-
-        <button
-          className="btn btn-warning btn-lg"
-          type="submit"
-          onClick={handleSearch}
-        >
-          Skip
-        </button>
+  if (startButton === false) {
+    return (
+      <div className="App mx-auto w-75 mt-5">
+        <div className="MainMenu card">
+          <div className="card-body">
+            <h1 className="card-title">Welcome to Bombocabulary!</h1>
+            <button
+              className="btn btn-primary btn-lg w-25 mt-3"
+              type="button"
+              onClick={startButtonSwitch}
+            >
+              Start
+            </button>
+            <h4 className="card-text mt-3">
+              Solve as many words as you can before the time runs out!
+            </h4>
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  } else {
+    return (
+      <div className="App mx-auto w-75 mt-5">
+        <div className="InputText">
+          {result && <ListDetails {...{ result, hiddenWord }} />}
+          {/* User input */}
+          <input
+            className="form-control w-75 mx-auto"
+            value={keyWord}
+            onChange={(e) => setKeyWord(e.target.value)}
+          />
+          <p className="alert alert-secondary text-dark">{displayMessage}</p>
+        </div>
+
+        {/* Buttons */}
+        <div className="InputButtons">
+          <button
+            className="btn btn-warning btn-lg w-25"
+            type="submit"
+            onClick={handleSearch}
+          >
+            Skip
+          </button>
+
+          <button
+            disabled={!keyWord}
+            className="btn btn-success btn-lg w-25"
+            type="submit"
+            onClick={checkWord}
+          >
+            Enter
+          </button>
+
+          <button
+            disabled={!keyWord}
+            className="btn btn-info btn-lg w-25"
+            type="submit"
+            onClick={handleClear}
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+    );
+  }
 }

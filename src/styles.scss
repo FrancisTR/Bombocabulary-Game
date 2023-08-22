@@ -1,23 +1,43 @@
 $primary-color: blueviolet;
-$background-color: #3cb4f0;
+$secondary-color: #ca03fc;
+$background-color: #362d38;
 
 *{
   margin: 0;
   padding: 0;
   background-color: $background-color;
-  color: white;
+  color: white!important;
 }
 
 
 
 .App {
   text-align: center;
+  background-color: $primary-color;
+}
+
+.InputText{
+  padding: 15px;
+  background-color: $secondary-color;
+  input{
+    margin: 25px;
+    color: black!important;
+  }
 }
 
 .InputButtons button{
   margin: 8px;
 }
 
+
+// ListDetails
 .WordCard{
   background-color: $primary-color;
+  .WordDefine{
+    height: 210px;
+  }
+  .HiddenWord{
+    margin-top: 100px;
+    letter-spacing: 5px;
+  }
 }
