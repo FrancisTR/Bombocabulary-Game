@@ -5,7 +5,6 @@ const ListDetails = ({ result, hiddenWord }) => {
 
   return (
     <div className="WordCard container mx-auto mt-5">
-      <h4 class="alert alert-info text-dark">Timer: TBD</h4>
       <div className="WhatWord">
         <h1>What's this word?</h1>
         <div>
@@ -17,7 +16,7 @@ const ListDetails = ({ result, hiddenWord }) => {
           <p>{meanings[0].definitions[0].definition}</p>
         </div>
 
-        <div className="HiddenWord">
+        <div className="HiddenWord alert alert-primary text-dark bg-warning text-dark">
           <h3>{hiddenWord}</h3>
         </div>
 

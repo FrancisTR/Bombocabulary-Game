@@ -1,6 +1,6 @@
-$primary-color: blueviolet;
-$secondary-color: #ca03fc;
-$background-color: #362d38;
+$primary-color: #3ca3cf;
+$secondary-color: #cf3c5e;
+$background-color: #1f2224;
 
 *{
   margin: 0;
@@ -14,6 +14,16 @@ $background-color: #362d38;
 .App {
   text-align: center;
   background-color: $primary-color;
+  .MainMenu{
+    border: 5px solid $secondary-color;
+    border-radius: 50px;
+  }
+  .StartButtons button{
+    margin: 8px;
+  }
+  .card{
+    border: 5px solid $primary-color;
+  }
 }
 
 .InputText{
@@ -25,10 +35,12 @@ $background-color: #362d38;
   }
 }
 
-.InputButtons button{
-  margin: 8px;
+.InputButtons {
+  background-color: $secondary-color;
+  button{
+    margin: 8px;
+  }
 }
-
 
 // ListDetails
 .WordCard{

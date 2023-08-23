@@ -7,7 +7,7 @@ import "./styles.scss";
 
 export default function App() {
   //Switch
-  const [startButton, setStartButton] = useState(false);
+  const [startButton, setStartButton] = useState(0);
 
   //User input
   const [keyWord, setKeyWord] = useState("");
@@ -21,8 +21,10 @@ export default function App() {
   const [currentWord, setCurrentWord] = useState(randomWord);
   const [hiddenWord, setHiddenWord] = useState(guessWord());
 
-  //word correction display text
-  const [displayMessage, setDisplayMessage] = useState("???");
+  //player lives
+  const [gameLives, setGameLives] = useState(0);
+  //Keep track of mode
+  const [gameModeTrack, setGameModeTrack] = useState(null);
 
   const api = "https://api.dictionaryapi.dev/api/v2/entries/en";
 
@@ -70,16 +72,31 @@ export default function App() {
     handleSearch();
   }, []);
 
-  function checkWord() {
+  function gameLivesCondition() {
+    if (gameLives >= 15) {
+      setStartButton(2);
+    } else if (gameLives <= 0) {
+      setStartButton(3);
+    }
+  }
+
+  function checkWord(string) {
     //console.log(keyWord);
     //console.log({ currentWord });
-    if (keyWord.toLowerCase() === currentWord.toLowerCase()) {
+
+    if (string === "Skip") {
+      console.log("Skipped!");
+      setGameLives(gameLives - 0.5);
+    } else if (keyWord.toLowerCase() === currentWord.toLowerCase()) {
       console.log("Win!");
-      handleSearch();
-      setKeyWord("");
+      setGameLives(gameLives + 1);
     } else {
       console.log("Lose");
+      setGameLives(gameLives - 1);
     }
+    handleSearch();
+    setKeyWord("");
+    gameLivesCondition();
   }
 
   function handleClear() {
@@ -87,71 +104,203 @@ export default function App() {
     //setResult(null);
   }
 
-  function startButtonSwitch() {
-    setStartButton(true);
+  function startButtonSwitch(boolean, gameMode) {
+    if (gameMode === "Easy") {
+      setGameLives(10);
+    } else if (gameMode === "Normal") {
+      setGameLives(5);
+    } else if (gameMode === "Hard") {
+      setGameLives(1);
+    }
+    setGameModeTrack(gameMode);
+    setStartButton(boolean);
   }
 
-  if (startButton === false) {
+  function MainMenuScreen() {
+    setGameModeTrack(null);
+    setStartButton(0);
+  }
+
+  if (startButton === 0) {
     return (
       <div className="App mx-auto w-75 mt-5">
-        <div className="MainMenu card">
+        <div className="MainMenu">
           <div className="card-body">
-            <h1 className="card-title">Welcome to Bombocabulary!</h1>
-            <button
-              className="btn btn-primary btn-lg w-25 mt-3"
-              type="button"
-              onClick={startButtonSwitch}
-            >
-              Start
-            </button>
+            <h1 className="card-title alert alert-primary text-dark bg-info text-dark">
+              Welcome to Bombocabulary!
+            </h1>
             <h4 className="card-text mt-3">
-              Solve as many words as you can before the time runs out!
+              Solve as many words as you can without losing hearts from either
+              skipping or getting the word incorrect! Reach 15 hearts to defuse
+              this vocabulary bomb! Otherwise, boooooom!
             </h4>
+            <div className="StartButtons">
+              {/* Cards */}
+              <div className="card">
+                <div className="card-body">
+                  <h5 className="card-title">Easy Mode</h5>
+                  <p className="card-text">
+                    <span role="img" aria-label="heart">
+                      ❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️
+                    </span>
+                  </p>
+                  <button
+                    className="btn btn-primary btn-lg w-25 mt-3"
+                    type="button"
+                    onClick={(e) => startButtonSwitch(1, "Easy")}
+                  >
+                    Easy
+                  </button>
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="card-body">
+                  <h5 className="card-title">Normal Mode</h5>
+                  <p className="card-text">
+                    <span role="img" aria-label="heart">
+                      ❤️❤️❤️❤️❤️
+                    </span>
+                  </p>
+                  <button
+                    className="btn btn-primary btn-lg w-25 mt-3"
+                    type="button"
+                    onClick={(e) => startButtonSwitch(1, "Normal")}
+                  >
+                    Normal
+                  </button>
+                </div>
+              </div>
+
+              <div className="card">
+                <div className="card-body">
+                  <h5 className="card-title">Hard Mode</h5>
+                  <p className="card-text">
+                    <span role="img" aria-label="heart">
+                      ❤️
+                    </span>
+                  </p>
+                  <button
+                    className="btn btn-primary btn-lg w-25 mt-3"
+                    type="button"
+                    onClick={(e) => startButtonSwitch(1, "Hard")}
+                  >
+                    Hard
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  } else if (startButton === 1) {
+    return (
+      <div className="App mx-auto w-75 mt-5">
+        <div className="InputText">
+          <h4 className="alert alert-primary text-dark bg-warning text-dark">
+            <span role="img" aria-label="heart">
+              ❤️
+            </span>{" "}
+            {gameLives}
+          </h4>
+          {result && <ListDetails {...{ result, hiddenWord }} />}
+          {/* User input */}
+          <input
+            className="form-control border border-primary w-75 mx-auto"
+            value={keyWord}
+            onChange={(e) => setKeyWord(e.target.value)}
+            placeholder="Enter your answer"
+          />
+
+          {/* Buttons */}
+          <div className="InputButtons">
+            <button
+              className="btn btn-warning btn-lg w-25"
+              type="submit"
+              onClick={(e) => checkWord("Skip")}
+            >
+              Skip
+            </button>
+
+            <button
+              disabled={!keyWord}
+              className="btn btn-success btn-lg w-25"
+              type="submit"
+              onClick={(e) => checkWord("Guessed")}
+            >
+              Enter
+            </button>
+
+            <button
+              disabled={!keyWord}
+              className="btn btn-info btn-lg w-25"
+              type="submit"
+              onClick={handleClear}
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  } else if (startButton === 2) {
+    //Victory
+    return (
+      <div className="App mx-auto w-75 mt-5">
+        <div className="InputText">
+          <h4 className="alert alert-primary text-dark bg-warning text-dark">
+            Defused!
+          </h4>
+
+          {/* Buttons */}
+          <div className="InputButtons">
+            <button
+              className="btn btn-primary btn-lg w-25"
+              type="button"
+              onClick={(e) => startButtonSwitch(1, gameModeTrack)}
+            >
+              Play Again
+            </button>
+
+            <button
+              className="btn btn-primary btn-lg w-25"
+              type="button"
+              onClick={(e) => MainMenuScreen()}
+            >
+              Main Menu
+            </button>
           </div>
         </div>
       </div>
     );
   } else {
+    //GameOver
     return (
       <div className="App mx-auto w-75 mt-5">
         <div className="InputText">
-          {result && <ListDetails {...{ result, hiddenWord }} />}
-          {/* User input */}
-          <input
-            className="form-control w-75 mx-auto"
-            value={keyWord}
-            onChange={(e) => setKeyWord(e.target.value)}
-          />
-          <p className="alert alert-secondary text-dark">{displayMessage}</p>
-        </div>
+          <h4 className="alert alert-primary text-dark bg-warning text-dark">
+            Boooooooooooom!
+          </h4>
 
-        {/* Buttons */}
-        <div className="InputButtons">
-          <button
-            className="btn btn-warning btn-lg w-25"
-            type="submit"
-            onClick={handleSearch}
-          >
-            Skip
-          </button>
+          {/* Buttons */}
+          <div className="InputButtons">
+            <button
+              className="btn btn-primary btn-lg w-25"
+              type="submit"
+              onClick={(e) => startButtonSwitch(1, gameModeTrack)}
+            >
+              Retry
+            </button>
 
-          <button
-            disabled={!keyWord}
-            className="btn btn-success btn-lg w-25"
-            type="submit"
-            onClick={checkWord}
-          >
-            Enter
-          </button>
-
-          <button
-            disabled={!keyWord}
-            className="btn btn-info btn-lg w-25"
-            type="submit"
-            onClick={handleClear}
-          >
-            Clear
-          </button>
+            <button
+              className="btn btn-primary btn-lg w-25"
+              type="submit"
+              onClick={(e) => MainMenuScreen()}
+            >
+              Main Menu
+            </button>
+          </div>
         </div>
       </div>
     );
