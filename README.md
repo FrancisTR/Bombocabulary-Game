@@ -8,11 +8,13 @@ This is a dictionary guessing game that uses a dictionary API along with randoml
 
 
 
-## Languages Used
+## Languages/Library Used
 - HTML <img width="3%" src="https://github.com/FrancisTR/FrancisTR.github.io/assets/123771828/6e8fc77f-c210-45fe-abd4-004b65d604f5" />
 - Sass <img width="3%" src="https://github.com/FrancisTR/Bombocabulary-Game/assets/123771828/26d9a632-397d-49f2-b66d-bb586d440fdd" />
 - JavaScript <img width="3%" src="https://github.com/FrancisTR/FrancisTR.github.io/assets/123771828/2b5d47bd-8414-4ef5-a390-0e54903c17a6" />
 - React <img width="3%" src="https://github.com/FrancisTR/Bombocabulary-Game/assets/123771828/ac3c4bcd-a0af-4187-a2e9-427598f9306a" />
+
+## Framework
 - Bootstrap <img width="3%" src="https://github.com/FrancisTR/FrancisTR/assets/123771828/3ad2e079-89ac-4e91-9daa-61b565ead8c1" />
 
 
