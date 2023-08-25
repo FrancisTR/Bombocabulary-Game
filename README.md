@@ -20,4 +20,4 @@ This is a dictionary guessing game that uses a dictionary API along with randoml
 
 
 ## Link to the game
-Coming soon!
+Check out the game here. CodeSandBox is used: https://jngwlm.csb.app/
