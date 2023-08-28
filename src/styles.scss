@@ -10,46 +10,66 @@ $background-color: #1f2224;
 }
 
 
-
-.App {
-  text-align: center;
-  background-color: $primary-color;
-  .MainMenu{
-    border: 5px solid $secondary-color;
-    border-radius: 50px;
-  }
-  .StartButtons button{
-    margin: 8px;
-  }
-  .card{
-    border: 5px solid $primary-color;
+//Overall page for all components
+.App{
+  border-radius: 10px;
+  border: 14px solid $secondary-color;
+  box-shadow: -22px 22px 5px rgba(177, 193, 204, 0.3);
+  .App, .card{
+    border: 0px;
   }
 }
+.MainMenuDescription{
+  background-color: transparent;
+}
 
+//User inputs
 .InputText{
-  padding: 15px;
   background-color: $secondary-color;
   input{
     margin: 25px;
     color: black!important;
   }
 }
-
 .InputButtons {
   background-color: $secondary-color;
+  text-align: center;
   button{
-    margin: 8px;
+    margin: 10px;
+    margin-top: 15px;
   }
 }
 
-// ListDetails
-.WordCard{
-  background-color: $primary-color;
-  .WordDefine{
-    height: 210px;
+// ListDetails component
+.App-Game{
+  .Game-Lives{
+    margin-top: -50px;
   }
+  //Details about the word
+  .WordDefine{
+    height: 350px;
+    margin: 0 10px;
+  }
+  //Word w/ underscore (display to user)
   .HiddenWord{
-    margin-top: 100px;
-    letter-spacing: 5px;
+    letter-spacing: 6px;
+    font-size: 22px;
+    font-weight: bold;
+  }
+}
+
+//WinLose Component
+.App-Result{
+  .DetailResults{
+    h2{
+      margin-top: 100px;
+      margin-bottom: 40px;
+    }
+    span{
+      border: 5px solid orange;
+      border-radius: 50%;
+      padding: 10px 20px;
+      margin: 5px;
+    }
   }
 }

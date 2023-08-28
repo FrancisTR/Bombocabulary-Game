@@ -1,38 +1,53 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+//Components
 import ListDetails from "./components/ListDetails";
+import WinLose from "./components/WinLose";
 
 import raw_text from "./words/words_alpha.txt";
 import "./styles.scss";
 
 export default function App() {
-  //Switch
+  //Button Switch
   const [startButton, setStartButton] = useState(0);
 
   //User input
   const [keyWord, setKeyWord] = useState("");
   const [result, setResult] = useState(null);
 
-  //random words
+  //random index to choose a word from the txt
   var [randomIndex, setRandomIndex] = useState(
     Math.floor(Math.random() * 1000)
   );
-  const [randomWord, setRandomWord] = useState("welcome");
+
+  //random word
+  const [randomWord, setRandomWord] = useState("null");
+  //Get the current word from the randomly choosen word
+  //Use for comparison
   const [currentWord, setCurrentWord] = useState(randomWord);
+  //Word to display to the user
   const [hiddenWord, setHiddenWord] = useState(guessWord());
 
   //player lives
   const [gameLives, setGameLives] = useState(0);
+  //player score
+  //index 0: Correct Word
+  //index 1: Incorrect Word
+  //index 2: Skip Word
+  const [wordScores, setWordScores] = useState([0, 0, 0]);
   //Keep track of mode
   const [gameModeTrack, setGameModeTrack] = useState(null);
 
   const api = "https://api.dictionaryapi.dev/api/v2/entries/en";
 
+  //Get a random index from the length of the wordList
   const randomNumberInRange = (max) => {
     const num = Math.floor(Math.random() * max);
     setRandomIndex(num);
   };
 
+  //Format the txt to an array of words
+  //Then, get a random index along with that random word from that index
   function generateWord() {
     fetch(raw_text)
       .then((r) => r.text())
@@ -47,6 +62,8 @@ export default function App() {
       });
   }
 
+  //This is for "hiddenWord" state.
+  //Randomly underline some characters for the user to guess
   function guessWord() {
     for (var i = 0, y = randomWord; i < randomWord.length / 2; i++) {
       var n = Math.floor(Math.random() * ((randomWord.length - 1) / 2));
@@ -55,6 +72,32 @@ export default function App() {
     return y;
   }
 
+  //Check to see if the goal is either met or not
+  function gameLivesCondition() {
+    if (gameLives >= 15) {
+      //Win
+      setStartButton(2);
+    } else if (gameLives <= 0) {
+      //Lose
+      setStartButton(3);
+    }
+  }
+
+  //Clear the text field on click
+  function handleClear() {
+    setKeyWord("");
+  }
+
+  //Browser Refresh
+  useEffect(() => {
+    setRandomWord(handleSearch());
+  }, []);
+
+  //---------------------
+  //---------------------
+  //---------------------
+  //---------------------
+  //Main functions to call
   async function handleSearch() {
     try {
       generateWord();
@@ -68,18 +111,7 @@ export default function App() {
     setHiddenWord(guessWord());
   }
 
-  useEffect(() => {
-    handleSearch();
-  }, []);
-
-  function gameLivesCondition() {
-    if (gameLives >= 15) {
-      setStartButton(2);
-    } else if (gameLives <= 0) {
-      setStartButton(3);
-    }
-  }
-
+  //Check the User's input and updating the score
   function checkWord(string) {
     //console.log(keyWord);
     //console.log({ currentWord });
@@ -87,23 +119,36 @@ export default function App() {
     if (string === "Skip") {
       console.log("Skipped!");
       setGameLives(gameLives - 0.5);
+      handleWordScore(2);
     } else if (keyWord.toLowerCase() === currentWord.toLowerCase()) {
       console.log("Win!");
       setGameLives(gameLives + 1);
-    } else {
+      handleWordScore(0);
+    } else if (keyWord.toLowerCase() !== currentWord.toLowerCase()) {
       console.log("Lose");
       setGameLives(gameLives - 1);
+      handleWordScore(1);
     }
     handleSearch();
     setKeyWord("");
     gameLivesCondition();
   }
 
-  function handleClear() {
-    setKeyWord("");
-    //setResult(null);
+  //Update the Score based on the user's action
+  function handleWordScore(index) {
+    const updateScore = wordScores.map((c, i) => {
+      if (i === index) {
+        // Increment
+        return c + 1;
+      } else {
+        // The rest haven't changed
+        return c;
+      }
+    });
+    setWordScores(updateScore);
   }
 
+  //Difficulty Buttons from main page
   function startButtonSwitch(boolean, gameMode) {
     if (gameMode === "Easy") {
       setGameLives(10);
@@ -114,80 +159,83 @@ export default function App() {
     }
     setGameModeTrack(gameMode);
     setStartButton(boolean);
+    setWordScores([0, 0, 0]);
+    handleSearch(); //Begin the Game
   }
 
+  //Main Menu
   function MainMenuScreen() {
     setGameModeTrack(null);
     setStartButton(0);
   }
+  //---------------------
+  //---------------------
+  //---------------------
+  //---------------------
 
+  //Switches
   if (startButton === 0) {
     return (
-      <div className="App mx-auto w-75 mt-5">
+      <div className="App mx-auto w-50 mt-5 mb-5">
         <div className="MainMenu">
-          <div className="card-body">
-            <h1 className="card-title alert alert-primary text-dark bg-info text-dark">
-              Welcome to Bombocabulary!
-            </h1>
-            <h4 className="card-text mt-3">
-              Solve as many words as you can without losing hearts from either
-              skipping or getting the word incorrect! Reach 15 hearts to defuse
-              this vocabulary bomb! Otherwise, boooooom!
-            </h4>
-            <div className="StartButtons">
-              {/* Cards */}
-              <div className="card">
-                <div className="card-body">
-                  <h5 className="card-title">Easy Mode</h5>
-                  <p className="card-text">
-                    <span role="img" aria-label="heart">
-                      ❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️
-                    </span>
-                  </p>
-                  <button
-                    className="btn btn-primary btn-lg w-25 mt-3"
-                    type="button"
-                    onClick={(e) => startButtonSwitch(1, "Easy")}
-                  >
-                    Easy
-                  </button>
-                </div>
+          <h1 className="alert text-dark bg-warning text-dark rounded-0">
+            Welcome to Bombocabulary
+          </h1>
+          <h5 className="MainMenuDescription m-2">
+            Solve as many words as you can without losing hearts from either
+            skipping or getting the word incorrect! Reach 15 hearts to defuse
+            this vocabulary bomb! Otherwise, boooooom...Game Over!
+          </h5>
+          <div className="StartButtons">
+            {/* Cards */}
+            <div className="card">
+              <div className="card-body">
+                <p className="card-text">
+                  <span role="img" aria-label="heart">
+                    ❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️
+                  </span>
+                </p>
+                <button
+                  className="btn btn-primary btn-lg w-75"
+                  type="button"
+                  onClick={() => startButtonSwitch(1, "Easy")}
+                >
+                  Easy Mode
+                </button>
               </div>
+            </div>
 
-              <div className="card">
-                <div className="card-body">
-                  <h5 className="card-title">Normal Mode</h5>
-                  <p className="card-text">
-                    <span role="img" aria-label="heart">
-                      ❤️❤️❤️❤️❤️
-                    </span>
-                  </p>
-                  <button
-                    className="btn btn-primary btn-lg w-25 mt-3"
-                    type="button"
-                    onClick={(e) => startButtonSwitch(1, "Normal")}
-                  >
-                    Normal
-                  </button>
-                </div>
+            <div className="card">
+              <div className="card-body">
+                <p className="card-text">
+                  <span role="img" aria-label="heart">
+                    ❤️❤️❤️❤️❤️
+                  </span>
+                </p>
+                <button
+                  className="btn btn-primary btn-lg w-75"
+                  type="button"
+                  onClick={() => startButtonSwitch(1, "Normal")}
+                >
+                  Normal Mode
+                </button>
               </div>
+            </div>
 
-              <div className="card">
-                <div className="card-body">
-                  <h5 className="card-title">Hard Mode</h5>
-                  <p className="card-text">
-                    <span role="img" aria-label="heart">
-                      ❤️
-                    </span>
-                  </p>
-                  <button
-                    className="btn btn-primary btn-lg w-25 mt-3"
-                    type="button"
-                    onClick={(e) => startButtonSwitch(1, "Hard")}
-                  >
-                    Hard
-                  </button>
-                </div>
+            <div className="card">
+              <div className="card-body">
+                <p className="card-text">
+                  <span role="img" aria-label="heart">
+                    ❤️
+                  </span>
+                </p>
+                <button
+                  className="btn btn-primary btn-lg w-75"
+                  type="button"
+                  onClick={() => startButtonSwitch(1, "Hard")}
+                >
+                  Hard Mode
+                </button>
               </div>
             </div>
           </div>
@@ -196,15 +244,9 @@ export default function App() {
     );
   } else if (startButton === 1) {
     return (
-      <div className="App mx-auto w-75 mt-5">
+      <div className="App mx-auto w-50 mt-5 mb-5">
         <div className="InputText">
-          <h4 className="alert alert-primary text-dark bg-warning text-dark">
-            <span role="img" aria-label="heart">
-              ❤️
-            </span>{" "}
-            {gameLives}
-          </h4>
-          {result && <ListDetails {...{ result, hiddenWord }} />}
+          {result && <ListDetails {...{ result, hiddenWord, gameLives }} />}
           {/* User input */}
           <input
             className="form-control border border-primary w-75 mx-auto"
@@ -216,25 +258,25 @@ export default function App() {
           {/* Buttons */}
           <div className="InputButtons">
             <button
-              className="btn btn-warning btn-lg w-25"
+              className="btn btn-warning btn-lg w-50"
               type="submit"
-              onClick={(e) => checkWord("Skip")}
+              onClick={() => checkWord("Skip")}
             >
-              Skip
+              Skip (❤️ -0.5)
             </button>
 
             <button
               disabled={!keyWord}
-              className="btn btn-success btn-lg w-25"
+              className="btn btn-success btn-lg w-50"
               type="submit"
-              onClick={(e) => checkWord("Guessed")}
+              onClick={() => checkWord("Guessed")}
             >
               Enter
             </button>
 
             <button
               disabled={!keyWord}
-              className="btn btn-info btn-lg w-25"
+              className="btn btn-info btn-lg w-50"
               type="submit"
               onClick={handleClear}
             >
@@ -244,63 +286,31 @@ export default function App() {
         </div>
       </div>
     );
-  } else if (startButton === 2) {
-    //Victory
-    return (
-      <div className="App mx-auto w-75 mt-5">
-        <div className="InputText">
-          <h4 className="alert alert-primary text-dark bg-warning text-dark">
-            Defused!
-          </h4>
-
-          {/* Buttons */}
-          <div className="InputButtons">
-            <button
-              className="btn btn-primary btn-lg w-25"
-              type="button"
-              onClick={(e) => startButtonSwitch(1, gameModeTrack)}
-            >
-              Play Again
-            </button>
-
-            <button
-              className="btn btn-primary btn-lg w-25"
-              type="button"
-              onClick={(e) => MainMenuScreen()}
-            >
-              Main Menu
-            </button>
-          </div>
-        </div>
-      </div>
-    );
   } else {
-    //GameOver
     return (
-      <div className="App mx-auto w-75 mt-5">
-        <div className="InputText">
-          <h4 className="alert alert-primary text-dark bg-warning text-dark">
-            Boooooooooooom!
-          </h4>
+      <div className="App mx-auto w-50 mt-5 mb-5">
+        <WinLose
+          mainMessage={startButton}
+          wordC={wordScores[0]}
+          wordInc={wordScores[1]}
+          wordSkip={wordScores[2]}
+        />
+        <div className="InputButtons">
+          <button
+            className="btn btn-primary btn-lg w-75"
+            type="submit"
+            onClick={() => startButtonSwitch(1, gameModeTrack)}
+          >
+            Play Again
+          </button>
 
-          {/* Buttons */}
-          <div className="InputButtons">
-            <button
-              className="btn btn-primary btn-lg w-25"
-              type="submit"
-              onClick={(e) => startButtonSwitch(1, gameModeTrack)}
-            >
-              Retry
-            </button>
-
-            <button
-              className="btn btn-primary btn-lg w-25"
-              type="submit"
-              onClick={(e) => MainMenuScreen()}
-            >
-              Main Menu
-            </button>
-          </div>
+          <button
+            className="btn btn-primary btn-lg w-75"
+            type="submit"
+            onClick={() => MainMenuScreen()}
+          >
+            Main Menu
+          </button>
         </div>
       </div>
     );
