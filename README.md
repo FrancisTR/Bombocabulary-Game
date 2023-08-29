@@ -19,5 +19,5 @@ This is a dictionary guessing game that uses a dictionary API along with randoml
 
 
 
-## Link to the game
-Coming soon!
+## Link to the Game
+Project hosted using CodeSandBox: https://jngwlm.csb.app/ 

@@ -30,7 +30,7 @@ const WinLose = (props) => {
   }
 
   return (
-    <div className="App-Result mx-auto w-75 mt-5">
+    <div className="App-Result mx-auto mt-5">
       <h4 className={color}>{message}</h4>
       <div className="DetailResults">
         <h1>Final Results</h1>

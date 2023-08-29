@@ -1,5 +1,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+
+//Notifications
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 //Components
 import ListDetails from "./components/ListDetails";
 import WinLose from "./components/WinLose";
@@ -29,7 +34,7 @@ export default function App() {
   const [hiddenWord, setHiddenWord] = useState(guessWord());
 
   //player lives
-  const [gameLives, setGameLives] = useState(0);
+  const [gameLives, setGameLives] = useState(null);
   //player score
   //index 0: Correct Word
   //index 1: Incorrect Word
@@ -74,21 +79,23 @@ export default function App() {
 
   //Check to see if the goal is either met or not
   function gameLivesCondition() {
-    if (gameLives >= 15) {
-      //Win
-      setStartButton(2);
-    } else if (gameLives <= 0) {
-      //Lose
-      setStartButton(3);
+    if (gameLives !== null) {
+      if (gameLives >= 15) {
+        //Win
+        setStartButton(2);
+      } else if (gameLives <= 0) {
+        //Lose
+        setStartButton(3);
+      }
     }
   }
 
   //Clear the text field on click
-  function handleClear() {
-    setKeyWord("");
-  }
+  //Not Used
+  // function handleClear() {
+  //   setKeyWord("");
+  // }
 
-  //Browser Refresh
   useEffect(() => {
     setRandomWord(handleSearch());
   }, []);
@@ -120,18 +127,59 @@ export default function App() {
       console.log("Skipped!");
       setGameLives(gameLives - 0.5);
       handleWordScore(2);
+      notify("Skip");
     } else if (keyWord.toLowerCase() === currentWord.toLowerCase()) {
       console.log("Win!");
       setGameLives(gameLives + 1);
       handleWordScore(0);
+      notify(true);
     } else if (keyWord.toLowerCase() !== currentWord.toLowerCase()) {
       console.log("Lose");
       setGameLives(gameLives - 1);
       handleWordScore(1);
+      notify(false);
     }
     handleSearch();
     setKeyWord("");
     gameLivesCondition();
+  }
+
+  //Notification of the guessed Word
+  function notify(wordCheck) {
+    if (wordCheck === "Skip") {
+      toast.warn("Skipped! 💣 -0.5", {
+        position: "top-center",
+        autoClose: 200,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: "dark"
+      });
+    } else if (wordCheck === true) {
+      toast.success("Correct! 💣 +1", {
+        position: "top-center",
+        autoClose: 200,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: "dark"
+      });
+    } else {
+      toast.error("Incorrect! 💣 -1", {
+        position: "top-center",
+        autoClose: 200,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: "dark"
+      });
+    }
   }
 
   //Update the Score based on the user's action
@@ -191,12 +239,12 @@ export default function App() {
             <div className="card">
               <div className="card-body">
                 <p className="card-text">
-                  <span role="img" aria-label="heart">
-                    ❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️
+                  <span role="img" aria-label="bomb">
+                    💣 💣 💣 💣 💣 💣 💣 💣 💣 💣
                   </span>
                 </p>
                 <button
-                  className="btn btn-primary btn-lg w-75"
+                  className="btn btn-primary btn-lg w-100"
                   type="button"
                   onClick={() => startButtonSwitch(1, "Easy")}
                 >
@@ -208,12 +256,12 @@ export default function App() {
             <div className="card">
               <div className="card-body">
                 <p className="card-text">
-                  <span role="img" aria-label="heart">
-                    ❤️❤️❤️❤️❤️
+                  <span role="img" aria-label="bomb">
+                    💣 💣 💣 💣 💣
                   </span>
                 </p>
                 <button
-                  className="btn btn-primary btn-lg w-75"
+                  className="btn btn-primary btn-lg w-100"
                   type="button"
                   onClick={() => startButtonSwitch(1, "Normal")}
                 >
@@ -225,12 +273,12 @@ export default function App() {
             <div className="card">
               <div className="card-body">
                 <p className="card-text">
-                  <span role="img" aria-label="heart">
-                    ❤️
+                  <span role="img" aria-label="bomb">
+                    💣
                   </span>
                 </p>
                 <button
-                  className="btn btn-primary btn-lg w-75"
+                  className="btn btn-primary btn-lg w-100"
                   type="button"
                   onClick={() => startButtonSwitch(1, "Hard")}
                 >
@@ -249,7 +297,7 @@ export default function App() {
           {result && <ListDetails {...{ result, hiddenWord, gameLives }} />}
           {/* User input */}
           <input
-            className="form-control border border-primary w-75 mx-auto"
+            className="form-control border border-warning w-75 mx-auto"
             value={keyWord}
             onChange={(e) => setKeyWord(e.target.value)}
             placeholder="Enter your answer"
@@ -258,29 +306,21 @@ export default function App() {
           {/* Buttons */}
           <div className="InputButtons">
             <button
-              className="btn btn-warning btn-lg w-50"
-              type="submit"
-              onClick={() => checkWord("Skip")}
-            >
-              Skip (❤️ -0.5)
-            </button>
-
-            <button
               disabled={!keyWord}
-              className="btn btn-success btn-lg w-50"
+              className="btn btn-success btn-lg w-75"
               type="submit"
               onClick={() => checkWord("Guessed")}
             >
               Enter
             </button>
-
+            <ToastContainer />
             <button
-              disabled={!keyWord}
-              className="btn btn-info btn-lg w-50"
+              className="btn btn-warning btn-lg w-75"
               type="submit"
-              onClick={handleClear}
+              onClick={() => checkWord("Skip")}
             >
-              Clear
+              <span role="img" aria-label="bomb"></span>
+              Skip (💣 -0.5)
             </button>
           </div>
         </div>

@@ -1,26 +1,29 @@
 $primary-color: #3ca3cf;
 $secondary-color: #cf3c5e;
-$background-color: #1f2224;
+$background-color: #1e2633;
+$backgroundSecondary-color: #1a2d3d;
 
 *{
   margin: 0;
   padding: 0;
-  background-color: $background-color;
   color: white!important;
+}
+body{
+  background-color: $background-color;
 }
 
 
 //Overall page for all components
 .App{
+  min-height: 69vh;
   border-radius: 10px;
+  background-color: $backgroundSecondary-color;
   border: 14px solid $secondary-color;
   box-shadow: -22px 22px 5px rgba(177, 193, 204, 0.3);
-  .App, .card{
+  .card{
     border: 0px;
+    background-color: $backgroundSecondary-color;
   }
-}
-.MainMenuDescription{
-  background-color: transparent;
 }
 
 //User inputs
@@ -42,12 +45,13 @@ $background-color: #1f2224;
 
 // ListDetails component
 .App-Game{
+  background-color: $backgroundSecondary-color;
   .Game-Lives{
     margin-top: -50px;
   }
   //Details about the word
   .WordDefine{
-    height: 350px;
+    min-height: 50vh;
     margin: 0 10px;
   }
   //Word w/ underscore (display to user)
@@ -55,11 +59,28 @@ $background-color: #1f2224;
     letter-spacing: 6px;
     font-size: 22px;
     font-weight: bold;
+    p{
+      color: black!important;
+      overflow-wrap: break-word;  
+      word-wrap: break-word; 
+      word-break: break-word;
+      display: block;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
   }
 }
 
 //WinLose Component
 .App-Result{
+  display: block;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  .ResultMessage{
+    margin-top: -50px;
+  }
   .DetailResults{
     h2{
       margin-top: 100px;
@@ -70,6 +91,7 @@ $background-color: #1f2224;
       border-radius: 50%;
       padding: 10px 20px;
       margin: 5px;
+      line-height: 60px;
     }
   }
 }
