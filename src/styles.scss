@@ -1,5 +1,4 @@
-$primary-color: #3ca3cf;
-$secondary-color: #cf3c5e;
+$primary-color: #cf3c5e;
 $background-color: #1e2633;
 $backgroundSecondary-color: #1a2d3d;
 
@@ -18,8 +17,9 @@ body{
   min-height: 69vh;
   border-radius: 10px;
   background-color: $backgroundSecondary-color;
-  border: 14px solid $secondary-color;
+  border: 14px solid $primary-color;
   box-shadow: -22px 22px 5px rgba(177, 193, 204, 0.3);
+  //Main Menu
   .card{
     border: 0px;
     background-color: $backgroundSecondary-color;
@@ -28,18 +28,17 @@ body{
 
 //User inputs
 .InputText{
-  background-color: $secondary-color;
+  background-color: $primary-color;
   input{
     margin: 25px;
     color: black!important;
   }
 }
 .InputButtons {
-  background-color: $secondary-color;
+  background-color: $primary-color;
   text-align: center;
   button{
     margin: 10px;
-    margin-top: 15px;
   }
 }
 

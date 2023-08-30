@@ -1,3 +1,4 @@
+//Shows information about the word
 const ListDetails = ({ result, hiddenWord, gameLives }) => {
   //console.log("Error: "+{ result });
 
@@ -10,7 +11,7 @@ const ListDetails = ({ result, hiddenWord, gameLives }) => {
         💣 {gameLives}
       </h4>
       <div className="WordDefine h-100">
-        <h1>What's this word?</h1>
+        <h1>Decrypt this word!</h1>
         <p>This word is a {meanings[0].partOfSpeech}.</p>
         <h3>Definition:</h3>
         <p>{meanings[0].definitions[0].definition}</p>
