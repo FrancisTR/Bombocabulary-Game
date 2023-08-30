@@ -280,7 +280,7 @@ export default function App() {
           </h1>
           <h5 className="MainMenuDescription m-2">
             Solve as many words as you can without losing hearts from either
-            skipping or getting the word incorrect! Reach 15 hearts to defuse
+            skipping or getting the word incorrect! Reach 15 bombs to defuse
             this vocabulary bomb! Otherwise, boooooom...Game Over!
           </h5>
           <div className="StartButtons">
