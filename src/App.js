@@ -100,7 +100,7 @@ export default function App() {
   // }
 
   //Randomly choose a word when the game starts.
-  //The states initially starts off with "a" as our placeholder
+  //The states initially starts off with "" as our placeholder
   if (randomWord === "") {
     setRandomWord(handleSearch());
   }
@@ -269,6 +269,13 @@ export default function App() {
   //---------------------
   //---------------------
 
+  //Pressing the Enter Key
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      checkWord("Guessed");
+    }
+  };
+
   //Switches
   if (startButton === 0) {
     //Main Menu
@@ -279,7 +286,7 @@ export default function App() {
             Welcome to Bombocabulary
           </h1>
           <h5 className="MainMenuDescription m-2">
-            Solve as many words as you can without losing hearts from either
+            Solve as many words as you can without losing bombs from either
             skipping or getting the word incorrect! Reach 15 bombs to defuse
             this vocabulary bomb! Otherwise, boooooom...Game Over!
           </h5>
@@ -350,6 +357,7 @@ export default function App() {
             className="form-control border border-warning w-75 mx-auto"
             value={keyWord}
             onChange={(e) => setKeyWord(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="Enter your answer"
           />
 
